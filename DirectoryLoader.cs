@@ -5,18 +5,24 @@ namespace DirectorySyncer
 {
     static class DirectoryLoader
     {
-        public static List<string> LoadDirectory(string dir)
+        public static List<FileInfo> LoadDirectory(string dir, string originDir)
         {
-            var results = new List<string>();
+            var results = new List<FileInfo>();
 
             foreach (var file in Directory.GetFiles(dir))
             {
-                results.Add(file);
+                var fileInfo = new System.IO.FileInfo(file);
+
+                results.Add(new FileInfo(){
+                    FilenameRelative = file.Replace(originDir, ""),
+                    CreateDate = fileInfo.CreationTimeUtc,
+                    ModifiedDate = fileInfo.LastWriteTimeUtc
+                });
             }
 
             foreach (var subDir in Directory.GetDirectories(dir))
             {
-                results.AddRange(LoadDirectory(subDir).ToArray());
+                results.AddRange(LoadDirectory(subDir, originDir).ToArray());
             }
 
             return results;

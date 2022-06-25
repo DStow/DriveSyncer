@@ -5,13 +5,13 @@ namespace DirectorySyncer
     {
         static public void Main(string[] args)
         {
-            string originDir = "P:\\";
-            string destinationDIr = "\\destination\\";
+            string originDir = "C:\\Code\\DriveSyncer\\original\\";
+            string destinationDIr = "C:\\Code\\DriveSyncer\\destination\\";
 
             // Parse a list of all the files in the original dir
-            var originFiles = DirectoryLoader.LoadDirectory(originDir);
-
-            Console.WriteLine(originFiles.Count);
+            var originFiles = DirectoryLoader.LoadDirectory(originDir, originDir);
+            var destFiles = DirectoryLoader.LoadDirectory(destinationDIr, destinationDIr);
+            
         }
 
     }
