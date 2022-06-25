@@ -16,7 +16,8 @@ namespace DirectorySyncer
                 results.Add(new FileInfo(){
                     FilenameRelative = file.Replace(originDir, ""),
                     CreateDate = fileInfo.CreationTimeUtc,
-                    ModifiedDate = fileInfo.LastWriteTimeUtc
+                    ModifiedDate = fileInfo.LastWriteTimeUtc,
+                    FileSize = fileInfo.Length
                 });
             }
 
