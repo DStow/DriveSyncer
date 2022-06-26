@@ -13,7 +13,8 @@ namespace DirectorySyncer
             {
                 var fileInfo = new System.IO.FileInfo(file);
 
-                results.Add(new FileInfo(){
+                results.Add(new FileInfo()
+                {
                     FilenameRelative = file.Replace(originDir, ""),
                     CreateDate = fileInfo.CreationTimeUtc,
                     ModifiedDate = fileInfo.LastWriteTimeUtc,
@@ -23,7 +24,13 @@ namespace DirectorySyncer
 
             foreach (var subDir in Directory.GetDirectories(dir))
             {
-                results.AddRange(LoadDirectory(subDir, originDir).ToArray());
+                if (Config.IgnoredPaths.Contains(subDir.Replace(originDir, "").ToUpper()))
+                {
+                    // Skip this dir as it's on the ignore list
+                    Console.WriteLine("Ignoring " + subDir);
+                }
+                else
+                    results.AddRange(LoadDirectory(subDir, originDir).ToArray());
             }
 
             return results;

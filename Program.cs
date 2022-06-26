@@ -1,12 +1,19 @@
-﻿
+﻿using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Configuration;
+using System;
+
 namespace DirectorySyncer
 {
     public class Program
     {
         static public void Main(string[] args)
         {
-            string originDir = "P:\\Fujifilm";
-            string destinationDIr = "D:\\Fujifilm";
+            // Setup configuration files
+            using IHost host = Host.CreateDefaultBuilder(args).Build();
+            Config.LoadConfig();
+
+            string originDir = Config.OriginDirectory;
+            string destinationDIr = Config.DestinationDirectory;
 
             // Parse a list of all the files in the original dir
             var originFiles = DirectoryLoader.LoadDirectory(originDir, originDir);
@@ -39,7 +46,7 @@ namespace DirectorySyncer
                     if (Directory.Exists(destFileDir) == false)
                         Directory.CreateDirectory(destFileDir);
 
-                        Console.WriteLine(missingFile);
+                    Console.WriteLine(missingFile);
 
                     File.Copy(originPath, destPath);
 
@@ -70,11 +77,18 @@ namespace DirectorySyncer
                 Console.WriteLine("Modified done!");
             });
 
-            missingTask.Start();
-            modifiedTask.Start();
+            if (Config.SkipMoving == false)
+            {
+                System.Console.WriteLine();
+                Console.WriteLine("Starting transfer...");
+                missingTask.Start();
+                modifiedTask.Start();
 
-            missingTask.Wait();
-            modifiedTask.Wait();
+                missingTask.Wait();
+                modifiedTask.Wait();
+            }
+
+            Console.WriteLine("Complete!");
         }
 
     }
