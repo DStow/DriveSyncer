@@ -5,8 +5,8 @@ namespace DirectorySyncer
     {
         static public void Main(string[] args)
         {
-            string originDir = "P:\\";
-            string destinationDIr = "C:\\Code\\DriveSyncer\\destination\\";
+            string originDir = "P:\\Fujifilm";
+            string destinationDIr = "D:\\Fujifilm";
 
             // Parse a list of all the files in the original dir
             var originFiles = DirectoryLoader.LoadDirectory(originDir, originDir);
@@ -23,6 +23,58 @@ namespace DirectorySyncer
             var modified = originFiles.Where(x => destFiles.Where(y => y.FilenameRelative == x.FilenameRelative && (x.ModifiedDate > y.ModifiedDate || x.FileSize != y.FileSize)).Count() > 0);
 
             Console.WriteLine("Modified files: " + modified.Count());
+
+            int missingProgress = 0;
+
+            var missingTask = new Task(() =>
+            {
+                foreach (var missingFile in missing)
+                {
+                    string originPath = originDir + missingFile.FilenameRelative;
+                    string destPath = destinationDIr + missingFile.FilenameRelative;
+
+                    var fileDir = missingFile.FilenameRelative.Substring(0, missingFile.FilenameRelative.LastIndexOf("\\"));
+
+                    var destFileDir = destinationDIr + fileDir;
+                    if (Directory.Exists(destFileDir) == false)
+                        Directory.CreateDirectory(destFileDir);
+
+                        Console.WriteLine(missingFile);
+
+                    File.Copy(originPath, destPath);
+
+                    missingProgress++;
+
+                    if (missingProgress % 100 == 0)
+                        Console.WriteLine(missingProgress);
+                }
+
+                Console.WriteLine("Missing done!");
+            });
+
+            var modifiedTask = new Task(() =>
+            {
+                foreach (var modifiedFile in modified)
+                {
+                    string originPath = originDir + modifiedFile.FilenameRelative;
+                    string destPath = destinationDIr + modifiedFile.FilenameRelative;
+
+                    File.Copy(originPath, destPath, true);
+
+                    missingProgress++;
+
+                    if (missingProgress % 100 == 0)
+                        Console.WriteLine(missingProgress);
+                }
+
+                Console.WriteLine("Modified done!");
+            });
+
+            missingTask.Start();
+            modifiedTask.Start();
+
+            missingTask.Wait();
+            modifiedTask.Wait();
         }
 
     }
