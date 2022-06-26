@@ -27,7 +27,7 @@ namespace DirectorySyncer
                 if (Config.IgnoredPaths.Contains(subDir.Replace(originDir, "").ToUpper()))
                 {
                     // Skip this dir as it's on the ignore list
-                    Console.WriteLine("Ignoring " + subDir);
+                    Logger.WriteLine("Ignoring " + subDir);
                 }
                 else
                     results.AddRange(LoadDirectory(subDir, originDir).ToArray());

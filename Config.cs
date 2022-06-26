@@ -30,15 +30,15 @@ namespace DirectorySyncer
                 IgnoredPaths[i] = IgnoredPaths[i].ToUpper();
             }
 
-            System.Console.WriteLine("--CONFIGURATION--");
-            System.Console.WriteLine("Origin: " + OriginDirectory);
-            System.Console.WriteLine("Destination: " + DestinationDirectory);
-            System.Console.WriteLine("Skipped Folders: " + IgnoredPaths.Length);
-            foreach (var path in IgnoredPaths) { System.Console.WriteLine("\t" + path); }
-            System.Console.WriteLine("Runtime: " + RuntimeMinutes);
-            System.Console.WriteLine("Skip move: " + SkipMoving);
-            System.Console.WriteLine("-----------------");
-            System.Console.WriteLine();
+            Logger.WriteLine("--CONFIGURATION--");
+            Logger.WriteLine("Origin: " + OriginDirectory);
+            Logger.WriteLine("Destination: " + DestinationDirectory);
+            Logger.WriteLine("Skipped Folders: " + IgnoredPaths.Length);
+            foreach (var path in IgnoredPaths) { Logger.WriteLine("\t" + path); }
+            Logger.WriteLine("Runtime: " + RuntimeMinutes);
+            Logger.WriteLine("Skip move: " + SkipMoving);
+            Logger.WriteLine("-----------------");
+            Logger.WriteLine("");
         }
     }
 }
