@@ -44,7 +44,13 @@ namespace DirectorySyncer
                     string originPath = originDir + missingFile.FilenameRelative;
                     string destPath = destinationDir + missingFile.FilenameRelative;
 
-                    var fileDir = missingFile.FilenameRelative.Substring(0, missingFile.FilenameRelative.LastIndexOf("\\"));
+
+                    int extensionIndex = missingFile.FilenameRelative.LastIndexOf("\\");
+                    if(extensionIndex == -1)
+                    {
+                        extensionIndex = 0;
+                    }
+                    var fileDir = missingFile.FilenameRelative.Substring(0, extensionIndex);
 
                     var destFileDir = destinationDir + fileDir;
                     if (Directory.Exists(destFileDir) == false)
