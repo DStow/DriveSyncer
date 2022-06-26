@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using System;
+using System.Diagnostics;
 
 namespace DirectorySyncer
 {
@@ -13,11 +14,11 @@ namespace DirectorySyncer
             Config.LoadConfig();
 
             string originDir = Config.OriginDirectory;
-            string destinationDIr = Config.DestinationDirectory;
+            string destinationDir = Config.DestinationDirectory;
 
             // Parse a list of all the files in the original dir
             var originFiles = DirectoryLoader.LoadDirectory(originDir, originDir);
-            var destFiles = DirectoryLoader.LoadDirectory(destinationDIr, destinationDIr);
+            var destFiles = DirectoryLoader.LoadDirectory(destinationDir, destinationDir);
 
             Console.WriteLine("Origin files: " + originFiles.Count());
 
@@ -33,16 +34,19 @@ namespace DirectorySyncer
 
             int missingProgress = 0;
 
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             var missingTask = new Task(() =>
             {
                 foreach (var missingFile in missing)
                 {
                     string originPath = originDir + missingFile.FilenameRelative;
-                    string destPath = destinationDIr + missingFile.FilenameRelative;
+                    string destPath = destinationDir + missingFile.FilenameRelative;
 
                     var fileDir = missingFile.FilenameRelative.Substring(0, missingFile.FilenameRelative.LastIndexOf("\\"));
 
-                    var destFileDir = destinationDIr + fileDir;
+                    var destFileDir = destinationDir + fileDir;
                     if (Directory.Exists(destFileDir) == false)
                         Directory.CreateDirectory(destFileDir);
 
@@ -54,6 +58,12 @@ namespace DirectorySyncer
 
                     if (missingProgress % 100 == 0)
                         Console.WriteLine(missingProgress);
+
+                    if (stopwatch.Elapsed.Minutes > Config.RuntimeMinutes)
+                    {
+                        Console.WriteLine("Missing has hit the runtime limit. Exiting");
+                        break;
+                    }
                 }
 
                 Console.WriteLine("Missing done!");
@@ -64,7 +74,7 @@ namespace DirectorySyncer
                 foreach (var modifiedFile in modified)
                 {
                     string originPath = originDir + modifiedFile.FilenameRelative;
-                    string destPath = destinationDIr + modifiedFile.FilenameRelative;
+                    string destPath = destinationDir + modifiedFile.FilenameRelative;
 
                     File.Copy(originPath, destPath, true);
 
@@ -72,6 +82,12 @@ namespace DirectorySyncer
 
                     if (missingProgress % 100 == 0)
                         Console.WriteLine(missingProgress);
+
+                    if (stopwatch.Elapsed.Minutes > Config.RuntimeMinutes)
+                    {
+                        Console.WriteLine("Modified has hit the runtime limit. Exiting");
+                        break;
+                    }
                 }
 
                 Console.WriteLine("Modified done!");

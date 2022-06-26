@@ -34,7 +34,7 @@ namespace DirectorySyncer
             System.Console.WriteLine("Origin: " + OriginDirectory);
             System.Console.WriteLine("Destination: " + DestinationDirectory);
             System.Console.WriteLine("Skipped Folders: " + IgnoredPaths.Length);
-            foreach(var path in IgnoredPaths){System.Console.WriteLine("\t" + path);}
+            foreach (var path in IgnoredPaths) { System.Console.WriteLine("\t" + path); }
             System.Console.WriteLine("Runtime: " + RuntimeMinutes);
             System.Console.WriteLine("Skip move: " + SkipMoving);
             System.Console.WriteLine("-----------------");
